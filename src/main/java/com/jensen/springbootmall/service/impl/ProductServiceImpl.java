@@ -1,5 +1,6 @@
 package com.jensen.springbootmall.service.impl;
 
+import com.jensen.springbootmall.dto.ProductRequest;
 import com.jensen.springbootmall.dao.ProductDao;
 import com.jensen.springbootmall.model.Product;
 import com.jensen.springbootmall.service.ProductService;
@@ -16,5 +17,10 @@ public class ProductServiceImpl implements ProductService {
     public Product getProductById(Integer productId) {
         Product productById = productDao.getProductById(productId);
         return productById;
+    }
+
+    @Override
+    public Integer createProduct(ProductRequest productRequest) {
+        return productDao.createProduct(productRequest);
     }
 }
