@@ -1,5 +1,6 @@
 package com.jensen.springbootmall.dao.rowmapper;
 
+import com.jensen.springbootmall.constant.ProductCategory;
 import com.jensen.springbootmall.model.Product;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -17,7 +18,11 @@ public class ProductRowMapper implements RowMapper<Product> {
         Product product = new Product();
         product.setProductId(rs.getInt("product_id"));
         product.setProductName(rs.getString("product_name"));
-        product.setCategory(rs.getString("category"));
+        String category = rs.getString("category");
+
+        ProductCategory productCategory = ProductCategory.valueOf(category);
+        product.setCategory(productCategory);
+
         product.setImageUrl(rs.getString("image_url"));
         product.setPrice(rs.getInt("price"));
         product.setStock(rs.getInt("stock"));
