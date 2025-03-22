@@ -1,6 +1,7 @@
 package com.jensen.springbootmall.controller;
 
 import com.jensen.springbootmall.constant.ProductCategory;
+import com.jensen.springbootmall.dto.ProductQueryParams;
 import com.jensen.springbootmall.dto.ProductRequest;
 import com.jensen.springbootmall.model.Product;
 import com.jensen.springbootmall.service.ProductService;
@@ -20,8 +21,12 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping("/products")
-    public ResponseEntity<List<Product>> getProducts(@RequestParam (required = false) ProductCategory category,@RequestParam (required = false) String search){
-        List<Product> productList=  productService.getProducts(category,search);
+    public ResponseEntity<List<Product>> getProducts(@RequestParam(required = false) ProductCategory category, @RequestParam(required = false) String search) {
+        ProductQueryParams productQueryParams = new ProductQueryParams();
+        productQueryParams.setCategory(category);
+        productQueryParams.setSearch(search);
+
+        List<Product> productList = productService.getProducts(productQueryParams);
         return ResponseEntity.status(HttpStatus.OK).body(productList);
     }
 
@@ -47,7 +52,7 @@ public class ProductController {
     public ResponseEntity<Product> updateProduct(@PathVariable Integer productId, @RequestBody @Valid ProductRequest productRequest) {
 
         Product product = productService.getProductById(productId);
-       // 檢查商品是否存在
+        // 檢查商品是否存在
         if (product == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
@@ -61,7 +66,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/products/{productId}")
-    public ResponseEntity<?> deleteProduct(@PathVariable Integer productId){
+    public ResponseEntity<?> deleteProduct(@PathVariable Integer productId) {
         productService.deleteProductById(productId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
