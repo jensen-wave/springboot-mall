@@ -1,5 +1,6 @@
 package com.jensen.springbootmall.service.impl;
 
+import com.jensen.springbootmall.constant.ProductCategory;
 import com.jensen.springbootmall.dto.ProductRequest;
 import com.jensen.springbootmall.dao.ProductDao;
 import com.jensen.springbootmall.model.Product;
@@ -32,8 +33,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> getProducts() {
-        return productDao.getProducts();
+    public List<Product> getProducts(ProductCategory category,String search) {
+        return productDao.getProducts(category,search);
     }
 
     @Override

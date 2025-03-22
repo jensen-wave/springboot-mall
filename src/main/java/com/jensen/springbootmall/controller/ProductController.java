@@ -1,5 +1,6 @@
 package com.jensen.springbootmall.controller;
 
+import com.jensen.springbootmall.constant.ProductCategory;
 import com.jensen.springbootmall.dto.ProductRequest;
 import com.jensen.springbootmall.model.Product;
 import com.jensen.springbootmall.service.ProductService;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.module.ModuleDescriptor;
 import java.util.List;
 
 @RestController
@@ -18,8 +20,8 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping("/products")
-    public ResponseEntity<List<Product>> getProducts(){
-        List<Product> productList=  productService.getProducts();
+    public ResponseEntity<List<Product>> getProducts(@RequestParam (required = false) ProductCategory category,@RequestParam (required = false) String search){
+        List<Product> productList=  productService.getProducts(category,search);
         return ResponseEntity.status(HttpStatus.OK).body(productList);
     }
 
