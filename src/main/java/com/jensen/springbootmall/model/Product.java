@@ -16,6 +16,7 @@ public class Product {
     private Date createdDate;
     private Date lastModifiedDate;
 
+
     public Integer getProductId() {
         return productId;
     }
