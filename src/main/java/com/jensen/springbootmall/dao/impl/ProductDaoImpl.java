@@ -94,22 +94,22 @@ public class ProductDaoImpl implements ProductDao {
 
         //查詢條件
         if (productQueryParams.getCategory() != null) {
-            sql = sql+" AND category = :category";
+            sql = sql + " AND category = :category";
             map.put("category", productQueryParams.getCategory().name());
         }
 
         if (productQueryParams.getSearch() != null) {
-            sql=sql+" AND product_name like :search";
-            map.put("search","%"+productQueryParams.getSearch()+"%");
+            sql = sql + " AND product_name like :search";
+            map.put("search", "%" + productQueryParams.getSearch() + "%");
         }
 
         // 排序
-        sql=sql+" ORDER BY "+productQueryParams.getOrderBy()+" "+productQueryParams.getSort();
+        sql = sql + " ORDER BY " + productQueryParams.getOrderBy() + " " + productQueryParams.getSort();
         // 分頁
-        sql=sql+" limit :limit OFFSET :offSet";
+        sql = sql + " limit :limit OFFSET :offSet";
 
-        map.put("limit",productQueryParams.getLimit());
-        map.put("offSet",productQueryParams.getOffset());
+        map.put("limit", productQueryParams.getLimit());
+        map.put("offSet", productQueryParams.getOffset());
 
         List<Product> productList = namedParameterJdbcTemplate.query(sql, map, new ProductRowMapper());
         return productList;
@@ -122,5 +122,28 @@ public class ProductDaoImpl implements ProductDao {
         map.put("productId", productId);
         namedParameterJdbcTemplate.update(sql, map);
 
+    }
+
+    @Override
+    public Integer countProduct(ProductQueryParams productQueryParams) {
+
+        String sql = "select count(*) from product WHERE 1=1";
+
+        Map<String, Object> map = new HashMap<>();
+
+        //查詢條件
+        if (productQueryParams.getCategory() != null) {
+            sql = sql + " AND category = :category";
+            map.put("category", productQueryParams.getCategory().name());
+        }
+
+        if (productQueryParams.getSearch() != null) {
+            sql = sql + " AND product_name like :search";
+            map.put("search", "%" + productQueryParams.getSearch() + "%");
+        }
+
+        Integer total = namedParameterJdbcTemplate.queryForObject(sql, map, Integer.class);
+
+        return total;
     }
 }
