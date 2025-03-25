@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory; // 引入 SLF4J 日誌框架的 LoggerFactory �
 import org.springframework.beans.factory.annotation.Autowired; // 引入自動注入註解
 import org.springframework.http.HttpStatus; // 引入 HTTP 狀態碼
 import org.springframework.stereotype.Component; // 引入 Component 註解，將該類標註為 Spring 的組件
+import org.springframework.util.DigestUtils;
 import org.springframework.web.client.HttpClientErrorException; // 引入 HTTP 客戶端錯誤異常類 (未使用)
 import org.springframework.web.client.RestClientException; // 引入 REST 客戶端異常類 (未使用)
 import org.springframework.web.server.ResponseStatusException; // 引入用於拋出 HTTP 狀態錯誤的異常類
@@ -33,6 +34,8 @@ public class UserServiceImpl implements UserService { // 實現 UserService 接�
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST); // 拋出 400 錯誤
         }
 
+        String hashedPassword = DigestUtils.md5DigestAsHex(userRegisterRequest.getPassword().getBytes());
+        userRegisterRequest.setPassword(hashedPassword);
         // 如果 email 不存在，則創建新用戶帳號
         return userDao.createUser(userRegisterRequest);
     }
@@ -48,12 +51,18 @@ public class UserServiceImpl implements UserService { // 實現 UserService 接�
     public User login(UserLoginRequest userLoginRequest) {
 
         User user = userDao.getUserByEmail(userLoginRequest.getEmail());
+
+        //檢查user是否存在
         if (user == null) {
             log.warn("該email {} 未註冊", userLoginRequest.getEmail());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST); // 拋出 400 錯誤
         }
 
-        if (user.getPassword().equals(userLoginRequest.getPassword())) {
+        // 使用 MD5 生成密碼的雜湊值
+        String hashedPassword = DigestUtils.md5DigestAsHex(userLoginRequest.getPassword().getBytes());
+
+        //比較密碼
+        if (user.getPassword().equals(hashedPassword)) {
             return user;
         }else {
             log.warn("email {} 的密碼不正確", userLoginRequest.getEmail());
