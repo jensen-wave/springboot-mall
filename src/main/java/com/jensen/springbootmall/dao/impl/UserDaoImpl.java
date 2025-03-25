@@ -27,7 +27,7 @@ public class UserDaoImpl implements UserDao { // 實現 UserDao 接口，提供�
     @Override
     public Integer createUser(UserRegisterRequest userRegisterRequest) {
         // SQL 查詢語句，插入新用戶資料
-        String sql="INSERT INTO user (email, password, created_date, last_modified_date) values (:email, :password, :createdDate, :lastModifiedDate)";
+        String sql="INSERT INTO `user` (email, password, created_date, last_modified_date) values (:email, :password, :createdDate, :lastModifiedDate)";
 
         // 創建 Map 來存儲 SQL 查詢參數
         Map<String,Object> map=new HashMap<>();
@@ -53,7 +53,7 @@ public class UserDaoImpl implements UserDao { // 實現 UserDao 接口，提供�
     @Override
     public User getUserById(Integer userId) {
         // SQL 查詢語句，根據 userId 查詢用戶資料
-        String sql="select user_id,email,password,created_date,last_modified_date from user where user_id=:userId";
+        String sql="select user_id,email,password,created_date,last_modified_date from `user` where user_id=:userId";
 
         // 創建 Map 來存儲 SQL 查詢參數
         Map<String,Object> map=new HashMap<>();
@@ -74,7 +74,7 @@ public class UserDaoImpl implements UserDao { // 實現 UserDao 接口，提供�
     @Override
     public User getUserByEmail(String email) {
         // SQL 查詢語句，根據 email 查詢用戶資料
-        String sql="select user_id,email,password,created_date,last_modified_date from user where email=:email";
+        String sql="select user_id,email,password,created_date,last_modified_date from `user` where email=:email";
 
         // 創建 Map 來存儲 SQL 查詢參數
         Map<String,Object> map=new HashMap<>();
