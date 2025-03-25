@@ -1,6 +1,7 @@
 package com.jensen.springbootmall.service.impl; // 引入 service 層實現包
 
 import com.jensen.springbootmall.dao.UserDao; // 引入 UserDao 接口，用於與資料庫進行交互
+import com.jensen.springbootmall.dto.UserLoginRequest;
 import com.jensen.springbootmall.dto.UserRegisterRequest; // 引入用戶註冊請求的資料傳輸對象 (DTO)
 import com.jensen.springbootmall.model.User; // 引入 User 類，表示用戶模型
 import com.jensen.springbootmall.service.UserService; // 引入 UserService 接口，該接口定義了用戶服務方法
@@ -41,5 +42,23 @@ public class UserServiceImpl implements UserService { // 實現 UserService 接�
     public User getUserById(Integer userId) {
         // 調用 userDao 層的 getUserById 方法從資料庫中查詢用戶
         return userDao.getUserById(userId);
+    }
+
+    @Override
+    public User login(UserLoginRequest userLoginRequest) {
+
+        User user = userDao.getUserByEmail(userLoginRequest.getEmail());
+        if (user == null) {
+            log.warn("該email {} 未註冊", userLoginRequest.getEmail());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST); // 拋出 400 錯誤
+        }
+
+        if (user.getPassword().equals(userLoginRequest.getPassword())) {
+            return user;
+        }else {
+            log.warn("email {} 的密碼不正確", userLoginRequest.getEmail());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+
     }
 }
