@@ -4,6 +4,7 @@ import com.jensen.springbootmall.dao.OrderDao;
 import com.jensen.springbootmall.dao.ProductDao;
 import com.jensen.springbootmall.dto.BuyItem;
 import com.jensen.springbootmall.dto.CreateOrderRequest;
+import com.jensen.springbootmall.model.Order;
 import com.jensen.springbootmall.model.OrderItem;
 import com.jensen.springbootmall.model.Product;
 import com.jensen.springbootmall.service.OrderService;
@@ -52,5 +53,13 @@ public class OrderServiceImpl implements OrderService {
         orderDao.createOrderItems(orderId, orderItemList);
 
         return orderId; // 返回創建的訂單ID
+    }
+
+    @Override
+    public Order getOrderById(Integer orderId) {
+        Order order = orderDao.getOrderById(orderId);
+        List<OrderItem> orderItemList = orderDao.getOrderItemByOrderId(orderId);
+        order.setOrderItemList(orderItemList);
+        return order;
     }
 }

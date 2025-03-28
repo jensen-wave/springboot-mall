@@ -1,6 +1,9 @@
 package com.jensen.springbootmall.dao.impl;
 
 import com.jensen.springbootmall.dao.OrderDao;
+import com.jensen.springbootmall.dao.rowmapper.OrderItemRowMapper;
+import com.jensen.springbootmall.dao.rowmapper.OrderRowMapper;
+import com.jensen.springbootmall.model.Order;
 import com.jensen.springbootmall.model.OrderItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -21,6 +24,34 @@ public class OrderDaoImpl implements OrderDao {
     // 注入 Spring JDBC 的 NamedParameterJdbcTemplate，用於執行帶命名參數的 SQL 語句
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+    @Override
+    public Order getOrderById(Integer orderId) {
+        String sql = "select order_id,user_id, total_amount, created_date, last_modified_date from `order` where order_id=:orderId";
+        Map<String, Object> map = new HashMap<>();
+        map.put("orderId",orderId);
+        List<Order> orderList = namedParameterJdbcTemplate.query(sql, map, new OrderRowMapper());
+        if (!orderList.isEmpty()) {
+            return orderList.get(0);
+        }else {
+            return null;
+        }
+
+    }
+
+    @Override
+    public List<OrderItem> getOrderItemByOrderId(Integer orderId) {
+        String sql="select order_item_id,order_id, oi.product_id, quantity, amount,product_name,image_url from order_item oi\n" +
+                "join product p on oi.product_id=p.product_id where order_id=:orderId";
+        Map<String,Object> map=new HashMap<>();
+        map.put("orderId",orderId);
+        List<OrderItem> orderItemList = namedParameterJdbcTemplate.query(sql, map, new OrderItemRowMapper());
+        if (orderItemList != null) {
+            return orderItemList;
+        }else {
+            return null;
+        }
+    }
 
     // 實現 OrderDao 接口的 createOrder 方法，用於創建訂單總資訊
     @Override
