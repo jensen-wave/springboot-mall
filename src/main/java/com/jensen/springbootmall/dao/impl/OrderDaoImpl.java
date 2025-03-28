@@ -29,11 +29,11 @@ public class OrderDaoImpl implements OrderDao {
     public Order getOrderById(Integer orderId) {
         String sql = "select order_id,user_id, total_amount, created_date, last_modified_date from `order` where order_id=:orderId";
         Map<String, Object> map = new HashMap<>();
-        map.put("orderId",orderId);
+        map.put("orderId", orderId);
         List<Order> orderList = namedParameterJdbcTemplate.query(sql, map, new OrderRowMapper());
         if (!orderList.isEmpty()) {
             return orderList.get(0);
-        }else {
+        } else {
             return null;
         }
 
@@ -41,14 +41,14 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public List<OrderItem> getOrderItemByOrderId(Integer orderId) {
-        String sql="select order_item_id,order_id, oi.product_id, quantity, amount,product_name,image_url from order_item oi\n" +
+        String sql = "select order_item_id,order_id, oi.product_id, quantity, amount,product_name,image_url from order_item oi\n" +
                 "join product p on oi.product_id=p.product_id where order_id=:orderId";
-        Map<String,Object> map=new HashMap<>();
-        map.put("orderId",orderId);
+        Map<String, Object> map = new HashMap<>();
+        map.put("orderId", orderId);
         List<OrderItem> orderItemList = namedParameterJdbcTemplate.query(sql, map, new OrderItemRowMapper());
         if (orderItemList != null) {
             return orderItemList;
-        }else {
+        } else {
             return null;
         }
     }
