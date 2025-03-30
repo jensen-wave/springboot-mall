@@ -3,6 +3,7 @@ package com.jensen.springbootmall.dao.impl;
 import com.jensen.springbootmall.dao.OrderDao;
 import com.jensen.springbootmall.dao.rowmapper.OrderItemRowMapper;
 import com.jensen.springbootmall.dao.rowmapper.OrderRowMapper;
+import com.jensen.springbootmall.dto.OrderQueryParams;
 import com.jensen.springbootmall.model.Order;
 import com.jensen.springbootmall.model.OrderItem;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,61 +26,121 @@ public class OrderDaoImpl implements OrderDao {
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
+    // 根據訂單ID查詢單一訂單的詳細資料
     @Override
     public Order getOrderById(Integer orderId) {
+        // 定義 SQL 查詢語句，從 `order` 表中根據訂單ID查詢訂單資料
         String sql = "select order_id,user_id, total_amount, created_date, last_modified_date from `order` where order_id=:orderId";
+
+        // 設定查詢條件
         Map<String, Object> map = new HashMap<>();
         map.put("orderId", orderId);
+
+        // 執行查詢並返回結果
         List<Order> orderList = namedParameterJdbcTemplate.query(sql, map, new OrderRowMapper());
+
+        // 如果查詢結果不為空，則返回第一筆訂單
         if (!orderList.isEmpty()) {
             return orderList.get(0);
         } else {
-            return null;
+            return null; // 若查無訂單，返回 null
         }
-
     }
 
+    // 計算符合條件的訂單數量
+    @Override
+    public Integer countOrder(OrderQueryParams orderQueryParams) {
+        // 定義 SQL 查詢語句，計算符合條件的訂單數量
+        String sql = "SELECT count(*) FROM `order` WHERE 1=1";
+
+        // 使用 Map 存放查詢條件
+        Map<String, Object> map = new HashMap<>();
+
+        // 根據查詢條件組合 SQL 語句
+        sql = addFilteringSql(sql, map, orderQueryParams);
+
+        // 執行查詢並返回結果
+        Integer count = namedParameterJdbcTemplate.queryForObject(sql, map, Integer.class);
+        return count;
+    }
+
+    // 根據查詢條件獲取訂單列表
+    @Override
+    public List<Order> getOrders(OrderQueryParams orderQueryParams) {
+        // 定義 SQL 查詢語句，從 `order` 表中查詢訂單資料
+        String sql = "select order_id,user_id, total_amount, created_date, last_modified_date from `order` where 1=1";
+
+        // 使用 Map 存放查詢條件
+        Map<String, Object> map = new HashMap<>();
+        // 根據查詢條件組合 SQL 語句
+        sql = addFilteringSql(sql, map, orderQueryParams);
+
+        // 按照創建日期降序排列
+        sql = sql + " order by created_date desc";
+        // 設定分頁
+        sql = sql + " limit :limit offSet :offSet";
+
+        // 設置分頁參數
+        map.put("limit", orderQueryParams.getLimit());
+        map.put("offSet", orderQueryParams.getOffSet());
+
+        // 執行查詢並返回結果
+        List<Order> orderList = namedParameterJdbcTemplate.query(sql, map, new OrderRowMapper());
+        return orderList;
+    }
+
+    // 用來處理查詢條件的 SQL 拼接
+    private String addFilteringSql(String sql, Map<String, Object> map, OrderQueryParams orderQueryParams) {
+        // 如果有提供 userId 查詢條件，則將其加入 SQL 查詢語句中
+        if (orderQueryParams.getUserId() != null) {
+            sql = sql + " and user_id=:userId";
+            map.put("userId", orderQueryParams.getUserId());
+        }
+        return sql; // 返回處理過的 SQL 語句
+    }
+
+    // 根據訂單ID查詢該訂單的所有訂單項目（商品）
     @Override
     public List<OrderItem> getOrderItemByOrderId(Integer orderId) {
-        String sql = "select order_item_id,order_id, oi.product_id, quantity, amount,product_name,image_url from order_item oi\n" +
+        // 定義 SQL 查詢語句，從 `order_item` 表中查詢訂單項目資料
+        String sql = "select order_item_id,order_id, oi.product_id, quantity, amount, product_name, image_url from order_item oi\n" +
                 "join product p on oi.product_id=p.product_id where order_id=:orderId";
+
+        // 設定查詢條件
         Map<String, Object> map = new HashMap<>();
         map.put("orderId", orderId);
+
+        // 執行查詢並返回結果
         List<OrderItem> orderItemList = namedParameterJdbcTemplate.query(sql, map, new OrderItemRowMapper());
-        if (orderItemList != null) {
-            return orderItemList;
-        } else {
-            return null;
-        }
+        return orderItemList != null ? orderItemList : null; // 返回查詢結果，若查無訂單項目則返回 null
     }
 
-    // 實現 OrderDao 接口的 createOrder 方法，用於創建訂單總資訊
+    // 創建訂單
     @Override
     public Integer createOrder(Integer userId, Integer totalAmount) {
         // 定義 SQL 插入語句，將訂單資料插入 `order` 表
-        // 使用反引號（``）包裹 `order`，因為它是 MySQL 保留字
         String sql = "INSERT INTO `order` (user_id, total_amount, created_date, last_modified_date) " +
                 "VALUES (:userId, :totalAmount, :createdDate, :lastModifiedDate)";
 
-        // 創建參數映射，用於將 Java 值綁定到 SQL 的命名參數
+        // 使用 Map 存放參數
         Map<String, Object> map = new HashMap<>();
-        map.put("userId", userId);         // 設置訂單的用戶 ID
+        map.put("userId", userId); // 設置訂單的用戶 ID
         map.put("totalAmount", totalAmount); // 設置訂單總金額
-        Date now = new Date();             // 獲取當前時間
-        map.put("createdDate", now);       // 設置創建時間
-        map.put("lastModifiedDate", now);  // 設置最後修改時間
+        Date now = new Date(); // 獲取當前時間
+        map.put("createdDate", now); // 設置創建時間
+        map.put("lastModifiedDate", now); // 設置最後修改時間
 
         // 用於儲存自動生成的主鍵（order_id）
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
-        // 執行 SQL 插入操作，將參數映射轉為 MapSqlParameterSource，並儲存生成的主鍵
+        // 執行 SQL 插入操作，並將自動生成的主鍵返回
         namedParameterJdbcTemplate.update(sql, new MapSqlParameterSource(map), keyHolder);
 
         // 返回資料庫生成的 order_id
         return keyHolder.getKey().intValue();
     }
 
-    // 實現 OrderDao 接口的 createOrderItems 方法，用於批量創建訂單明細
+    // 批量創建訂單項目
     @Override
     public void createOrderItems(Integer orderId, List<OrderItem> orderItemList) {
         // 定義 SQL 插入語句，將訂單明細插入 order_item 表
@@ -93,14 +154,13 @@ public class OrderDaoImpl implements OrderDao {
         for (int i = 0; i < orderItemList.size(); i++) {
             OrderItem orderItem = orderItemList.get(i); // 獲取當前訂單明細物件
             parameterSources[i] = new MapSqlParameterSource(); // 初始化當前參數來源
-            parameterSources[i].addValue("orderId", orderId);   // 設置訂單 ID，關聯至 `order` 表
+            parameterSources[i].addValue("orderId", orderId); // 設置訂單 ID
             parameterSources[i].addValue("productId", orderItem.getProductId()); // 設置商品 ID
-            parameterSources[i].addValue("quantity", orderItem.getQuantity());   // 設置購買數量
-            parameterSources[i].addValue("amount", orderItem.getAmount());       // 設置單品項金額
+            parameterSources[i].addValue("quantity", orderItem.getQuantity()); // 設置商品數量
+            parameterSources[i].addValue("amount", orderItem.getAmount()); // 設置商品金額
         }
 
-        // 使用 batchUpdate 執行批量插入，提高效率
-        // 將 SQL 語句與參數陣列一起傳入，執行多筆插入
+        // 使用 batchUpdate 執行批量插入，效率更高
         namedParameterJdbcTemplate.batchUpdate(sql, parameterSources);
     }
 }
