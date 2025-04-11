@@ -108,8 +108,7 @@ src/
 
 下圖為主要資料表的關聯：
 
-![ER Diagram](./springboot-er.png)
-
+![ER Diagram](./springboot-er.png.png)
 
 ## 主要功能特色
 
