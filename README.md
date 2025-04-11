@@ -110,7 +110,6 @@ src/
 
 ![ER Diagram](./springboot-er.png)
 
----
 
 ## 主要功能特色
 
