@@ -170,7 +170,3 @@ src/
  整合 Swagger/OpenAPI 自動生成文件
 
 雲端部署 Render / Railway / Docker 容器化
-
- 訂單狀態追蹤與歷史查詢
-
-
