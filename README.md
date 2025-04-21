@@ -33,7 +33,7 @@
 | Framework    | Spring Boot, Spring MVC, Spring JDBC         |
 | Build Tool   | Maven                                         |
 | Database     | MySQL（本地） + H2（測試）                     |
-| Others       | Hibernate Validator, JUnit, Postman     |
+| Others       | Hibernate Validator, JUnit, Talend API Tester     |
 
 ---
 
@@ -154,4 +154,20 @@ src/
 
 > Talend API Tester 是一款專業的 RESTful API 測試工具（Chrome 擴充套件），可用來驗證 API 端點的請求與回應格式是否正確。  
 > 支援 POST/GET/PUT/DELETE 測試、Header 設定、JSON Body 傳送、自動保存測試案例等功能。
+
+
+## 可擴充功能規劃（Future Work）
+
+ JWT 登入驗證與角色權限控管
+
+ 商品搜尋與價格篩選（搭配分頁與排序）
+
+ 加入購物車功能、結帳流程
+
+ 整合 Swagger/OpenAPI 自動生成文件
+
+雲端部署 Render / Railway / Docker 容器化
+
+ 訂單狀態追蹤與歷史查詢
+
 
