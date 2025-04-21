@@ -139,10 +139,10 @@ src/
 
 ## 主要功能特色
 
-✅ 使用者註冊與查詢  
-✅ 商品 CRUD 管理  
-✅ 建立訂單與訂單查詢  
-✅ 基礎資料驗證與錯誤處理  
+ 使用者註冊與查詢  
+ 商品 CRUD 管理  
+ 建立訂單與訂單查詢  
+ 基礎資料驗證與錯誤處理  
 
 ---
 
@@ -151,7 +151,7 @@ src/
 
 - 使用 JUnit + Spring Boot Test 撰寫後端整合測試
 - 使用 H2 資料庫模擬測試環境
-- 🔍 API 測試工具：**Talend API Tester**
+- API 測試工具：**Talend API Tester**
 
 > Talend API Tester 是一款專業的 RESTful API 測試工具（Chrome 擴充套件），可用來驗證 API 端點的請求與回應格式是否正確。  
 > 支援 POST/GET/PUT/DELETE 測試、Header 設定、JSON Body 傳送、自動保存測試案例等功能。
