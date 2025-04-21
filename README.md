@@ -6,21 +6,34 @@
 
 ## 專案目標
 
-- 練習使用 Spring Boot 建立電商後端服務
-- 掌握 RESTful API 設計、資料庫整合與商業邏輯分層
-- 建立具有 CRUD、驗證與查詢功能的簡易商城系統
+- 練習使用 Spring Boot 建立電商後端 RESTful API
+- 掌握 Controller → Service → DAO 的三層架構設計
+- 實作會員註冊、商品 CRUD、訂單建立與查詢功能
+- 具備擴充性、測試性、部署性之實務專案
+
+---
+
+##  專案亮點
+
+-  分層式 MVC 架構，清晰分離 Controller、Service、DAO
+-  採用 Spring JDBC Template + RowMapper，自行撰寫 SQL 邏輯
+-  Hibernate Validator 表單驗證，確保資料正確性
+-  整合 JUnit + Spring Boot Test + H2 測試資料庫
+-  RESTful API 設計原則，支援標準錯誤處理與例外格式
+-  清晰命名的 DTO 類型（如 `CreateOrderRequest`, `BuyItem`）
+
 
 ---
 
 ##  技術棧（Tech Stack）
 
-| 類別         | 技術 |
-|--------------|------|
-| Framework    | Spring Boot |
-| Language     | Java 17+ |
-| Build Tool   | Maven |
-| Database     | MySQL（或內建 H2 測試用） |
-| Libraries    | Spring Data JPA, Spring MVC, Hibernate Validator |
+| 類別         | 技術                                         |
+|--------------|----------------------------------------------|
+| Language     | Java 17+                                     |
+| Framework    | Spring Boot, Spring MVC, Spring JDBC         |
+| Build Tool   | Maven                                         |
+| Database     | MySQL（本地） + H2（測試）                     |
+| Others       | Hibernate Validator, JUnit, Postman     |
 
 ---
 
@@ -135,5 +148,10 @@ src/
 
 ## 測試資訊
 
-- 使用 JUnit + Spring Boot Test 撰寫整合測試
-- 使用 H2 設定測試資料庫
+- 使用 JUnit + Spring Boot Test 撰寫後端整合測試
+- 使用 H2 資料庫模擬測試環境
+- 🔍 API 測試工具：**Talend API Tester**
+
+> Talend API Tester 是一款專業的 RESTful API 測試工具（Chrome 擴充套件），可用來驗證 API 端點的請求與回應格式是否正確。  
+> 支援 POST/GET/PUT/DELETE 測試、Header 設定、JSON Body 傳送、自動保存測試案例等功能。
+
