@@ -11,7 +11,29 @@ public class CartItem {
     private Date createdDate; // 創建時間
     private Date lastModifiedDate; // 最後修改時間
 
+    private String productName;
+    private String imageUrl;
+
+
+
     // Getter and Setter
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
     public Integer getCartItemId() {
         return cartItemId;
     }

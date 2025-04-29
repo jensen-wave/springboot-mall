@@ -18,6 +18,10 @@ public class CartItemRowMapper implements RowMapper<CartItem> {
         cartItem.setQuantity(rs.getInt("quantity"));
         cartItem.setCreatedDate(rs.getTimestamp("created_date"));
         cartItem.setLastModifiedDate(rs.getTimestamp("last_modified_date"));
+
+        cartItem.setProductName(rs.getString("product_name"));
+        cartItem.setImageUrl(rs.getString("image_url"));
+
         return cartItem;
     }
 }

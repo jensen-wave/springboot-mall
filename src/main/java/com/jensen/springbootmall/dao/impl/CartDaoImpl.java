@@ -28,7 +28,14 @@ public class CartDaoImpl implements CartDao {
     @Override
     public CartItem getCartItemByUserIdAndProductId(Integer userId, Integer productId) {
         // 查詢指定用戶和商品的購物車項目
-        String sql = "SELECT * FROM cart_item WHERE user_id = :userId AND product_id = :productId";
+
+        String sql = "SELECT ci.cart_item_id, ci.user_id, ci.product_id, ci.quantity, " +
+                "ci.created_date, ci.last_modified_date, " +
+                "p.product_name, p.image_url " +
+                "FROM cart_item ci " +
+                "JOIN product p ON ci.product_id = p.product_id " +
+                "WHERE ci.user_id = :userId AND ci.product_id = :productId";
+
         Map<String, Object> map = new HashMap<>();
         map.put("userId", userId);
         map.put("productId", productId);
@@ -74,7 +81,11 @@ public class CartDaoImpl implements CartDao {
     @Override
     public CartItem getCartItemById(Integer cartItemId) {
         // 根據 ID 查詢購物車項目
-        String sql = "SELECT * FROM cart_item WHERE cart_item_id = :cartItemId";
+        String sql = "SELECT cart_item.*,product.product_name,product.image_url " +
+                "FROM cart_item " +
+                "join product on cart_item.product_id = product.product_id " +
+                "WHERE cart_item_id=:cartItemId";
+
         Map<String, Object> map = new HashMap<>();
         map.put("cartItemId", cartItemId);
         // 執行查詢並映射結果
