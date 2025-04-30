@@ -42,6 +42,15 @@ public class CartDaoImpl implements CartDao {
         return namedParameterJdbcTemplate.query(sql, params, new CartItemRowMapper());
     }
 
+    @Override
+    public void deleteCartItem(Integer userId, Integer cartItemId) {
+        String sql = "delete from cart_item where user_id=:userId and cart_item_id=:cartItemId";
+        Map<String, Object> map = new HashMap<>();
+        map.put("userId", userId);
+        map.put("cartItemId", cartItemId);
+        namedParameterJdbcTemplate.update(sql,map);
+    }
+
     // 查詢指定用戶與商品是否已有購物車項目（避免重複加入）
     @Override
     public CartItem getCartItemByUserIdAndProductId(Integer userId, Integer productId) {

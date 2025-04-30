@@ -33,6 +33,11 @@ public class CartServiceImpl implements CartService {
         return cartDao.getCartItemsByUserId(userId); // 直接調用 DAO 查詢所有項目
     }
 
+    @Override
+    public void deleteCartItem(Integer userId, Integer cartItemId) {
+        cartDao.deleteCartItem(userId,cartItemId);
+    }
+
     // 新增或更新購物車項目，使用 @Transactional 確保操作原子性
     @Transactional
     @Override

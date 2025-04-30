@@ -22,6 +22,13 @@ public class CartController {
     @Autowired
     private CartService cartService;
 
+    @DeleteMapping("/users/{userId}/cart/{cartItemId}")
+    public ResponseEntity<?> deleteCartItem(@PathVariable Integer userId,
+                                            @PathVariable Integer cartItemId){
+        cartService.deleteCartItem(userId,cartItemId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
     // GET /users/{userId}/cart：取得指定用戶的購物車清單
     @GetMapping("/users/{userId}/cart")
     public ResponseEntity<List<CartItem>> getCartItems(

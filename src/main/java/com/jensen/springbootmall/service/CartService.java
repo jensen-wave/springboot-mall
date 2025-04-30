@@ -22,4 +22,7 @@ public interface CartService {
 
     // 查詢指定用戶的所有購物車項目清單（用於購物車頁面顯示）
     List<CartItem> getCartItems(Integer userId);
+
+    void deleteCartItem(Integer userId,Integer cartItemId);
+
 }
