@@ -1,5 +1,7 @@
 package com.jensen.springbootmall.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Date;
 
 // CartItem: 表示購物車中的一筆項目，包含用戶、商品、數量等資訊
@@ -14,9 +16,25 @@ public class CartItem {
     private String productName;
     private String imageUrl;
 
+    private Integer unitPrice;
+
+
+    // 自動計算總價（不存 DB）
+    @JsonProperty("totalPrice")
+    public Integer getTotalPrice() {
+        return quantity * unitPrice;
+    }
 
 
     // Getter and Setter
+
+    public Integer getUnitPrice() {
+        return unitPrice;
+    }
+
+    public void setUnitPrice(Integer unitPrice) {
+        this.unitPrice = unitPrice;
+    }
 
     public String getProductName() {
         return productName;

@@ -30,7 +30,7 @@ public class CartDaoImpl implements CartDao {
         // 查詢指定用戶和商品的購物車項目
 
         String sql = "SELECT ci.cart_item_id, ci.user_id, ci.product_id, ci.quantity, " +
-                "ci.created_date, ci.last_modified_date, " +
+                "ci.created_date, ci.last_modified_date, p.price, " +
                 "p.product_name, p.image_url " +
                 "FROM cart_item ci " +
                 "JOIN product p ON ci.product_id = p.product_id " +
@@ -81,7 +81,7 @@ public class CartDaoImpl implements CartDao {
     @Override
     public CartItem getCartItemById(Integer cartItemId) {
         // 根據 ID 查詢購物車項目
-        String sql = "SELECT cart_item.*,product.product_name,product.image_url " +
+        String sql = "SELECT cart_item.*,product.product_name,product.image_url, product.price " +
                 "FROM cart_item " +
                 "join product on cart_item.product_id = product.product_id " +
                 "WHERE cart_item_id=:cartItemId";
