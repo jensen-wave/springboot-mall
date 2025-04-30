@@ -24,5 +24,12 @@ public interface CartDao {
     // 根據用戶 ID 取得其所有購物車項目（通常用於前端頁面列出購物車內容）
     List<CartItem> getCartItemsByUserId(Integer userId);
 
-    void deleteCartItem(Integer userId,Integer cartItemId);
+    // 刪除指定用戶的指定購物車項目（需驗證 userId 確保安全）
+    void deleteCartItem(Integer userId, Integer cartItemId);
+
+    // 清空指定用戶的整個購物車
+    void deleteCartItemsByUserId(Integer userId);
+
+    // 統計指定用戶的購物車內項目數量（常用於顯示購物車角標數量等場景）
+    int countCartItemsByUserId(Integer userId);
 }

@@ -2,12 +2,12 @@
 package com.jensen.springbootmall.dao.impl;
 
 import com.jensen.springbootmall.dao.CartDao;
-import com.jensen.springbootmall.dao.rowmapper.CartItemRowMapper; // 負責將查詢結果轉換為 CartItem 物件
-import com.jensen.springbootmall.dto.CreateCartItemRequest; // 封裝新增購物車項目的資料
+import com.jensen.springbootmall.dao.rowmapper.CartItemRowMapper;
+import com.jensen.springbootmall.dto.CreateCartItemRequest;
 import com.jensen.springbootmall.model.CartItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate; // JDBC 查詢模板，支援具名參數
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
@@ -17,15 +17,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-// CartDaoImpl: 實作 CartDao 介面，處理與購物車相關的資料庫操作
 @Component
 public class CartDaoImpl implements CartDao {
 
-    // 注入 JDBC 模板，提供查詢與更新功能
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    // 查詢指定用戶的所有購物車項目（用於前端顯示購物車清單）
+    // 查詢指定用戶的所有購物車項目
     @Override
     public List<CartItem> getCartItemsByUserId(Integer userId) {
         String sql = "SELECT ci.cart_item_id, ci.user_id, ci.product_id, ci.quantity, " +
@@ -38,20 +36,44 @@ public class CartDaoImpl implements CartDao {
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
 
-        // 查詢並使用 RowMapper 將結果轉換為 List<CartItem>
         return namedParameterJdbcTemplate.query(sql, params, new CartItemRowMapper());
     }
 
+    // 刪除特定用戶的某筆購物車項目（雙重條件避免誤刪其他用戶資料）
     @Override
     public void deleteCartItem(Integer userId, Integer cartItemId) {
-        String sql = "delete from cart_item where user_id=:userId and cart_item_id=:cartItemId";
+        String sql = "DELETE FROM cart_item WHERE user_id = :userId AND cart_item_id = :cartItemId";
+
         Map<String, Object> map = new HashMap<>();
         map.put("userId", userId);
         map.put("cartItemId", cartItemId);
-        namedParameterJdbcTemplate.update(sql,map);
+
+        namedParameterJdbcTemplate.update(sql, map);
     }
 
-    // 查詢指定用戶與商品是否已有購物車項目（避免重複加入）
+    // 清空用戶購物車
+    @Override
+    public void deleteCartItemsByUserId(Integer userId) {
+        String sql = "DELETE FROM cart_item WHERE user_id = :userId";
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("userId", userId);
+
+        namedParameterJdbcTemplate.update(sql, map);
+    }
+
+    // 統計用戶購物車內商品筆數（可用於角標或結帳驗證）
+    @Override
+    public int countCartItemsByUserId(Integer userId) {
+        String sql = "SELECT COUNT(*) FROM cart_item WHERE user_id = :userId";
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("userId", userId);
+
+        return namedParameterJdbcTemplate.queryForObject(sql, map, Integer.class);
+    }
+
+    // 查詢特定用戶是否已有某商品在購物車中
     @Override
     public CartItem getCartItemByUserIdAndProductId(Integer userId, Integer productId) {
         String sql = "SELECT ci.cart_item_id, ci.user_id, ci.product_id, ci.quantity, " +
@@ -66,32 +88,31 @@ public class CartDaoImpl implements CartDao {
         map.put("productId", productId);
 
         List<CartItem> cartItems = namedParameterJdbcTemplate.query(sql, map, new CartItemRowMapper());
-
-        return cartItems.isEmpty() ? null : cartItems.get(0); // 回傳結果（若有）
+        return cartItems.isEmpty() ? null : cartItems.get(0);
     }
 
-    // 新增購物車項目，並回傳資料庫自動產生的主鍵 ID
+    // 新增購物車項目，並回傳主鍵 ID
     @Override
-    public Integer createCartItem(Integer userId, CreateCartItemRequest createCartItemRequest) {
+    public Integer createCartItem(Integer userId, CreateCartItemRequest request) {
         String sql = "INSERT INTO cart_item (user_id, product_id, quantity, created_date, last_modified_date) " +
                 "VALUES (:userId, :productId, :quantity, :createdDate, :lastModifiedDate)";
 
         MapSqlParameterSource paramSource = new MapSqlParameterSource();
         paramSource.addValue("userId", userId);
-        paramSource.addValue("productId", createCartItemRequest.getProductId());
-        paramSource.addValue("quantity", createCartItemRequest.getQuantity());
+        paramSource.addValue("productId", request.getProductId());
+        paramSource.addValue("quantity", request.getQuantity());
 
         Date now = new Date();
         paramSource.addValue("createdDate", now);
         paramSource.addValue("lastModifiedDate", now);
 
-        KeyHolder keyHolder = new GeneratedKeyHolder(); // 接收自增主鍵
+        KeyHolder keyHolder = new GeneratedKeyHolder();
         namedParameterJdbcTemplate.update(sql, paramSource, keyHolder);
 
-        return keyHolder.getKey().intValue(); // 回傳 cart_item_id
+        return keyHolder.getKey().intValue();
     }
 
-    // 更新購物車項目的數量
+    // 更新購物車商品數量
     @Override
     public void updateCartItemQuantity(Integer cartItemId, Integer newQuantity) {
         String sql = "UPDATE cart_item " +
@@ -106,7 +127,7 @@ public class CartDaoImpl implements CartDao {
         namedParameterJdbcTemplate.update(sql, map);
     }
 
-    // 根據 cart_item_id 查詢一筆購物車項目（含商品名稱、價格、圖片）
+    // 根據 ID 查詢購物車項目（包含關聯的商品資料）
     @Override
     public CartItem getCartItemById(Integer cartItemId) {
         String sql = "SELECT cart_item.*, product.product_name, product.image_url, product.price " +
@@ -118,7 +139,6 @@ public class CartDaoImpl implements CartDao {
         map.put("cartItemId", cartItemId);
 
         List<CartItem> cartItems = namedParameterJdbcTemplate.query(sql, map, new CartItemRowMapper());
-
-        return cartItems.isEmpty() ? null : cartItems.get(0); // 回傳查詢結果
+        return cartItems.isEmpty() ? null : cartItems.get(0);
     }
 }
