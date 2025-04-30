@@ -4,6 +4,8 @@ package com.jensen.springbootmall.dao;
 import com.jensen.springbootmall.dto.CreateCartItemRequest; // DTO，用於接收新增購物車項目的請求資料
 import com.jensen.springbootmall.model.CartItem; // 模型類別，表示購物車中的一筆資料
 
+import java.util.List;
+
 // CartDao: 提供購物車相關的資料庫操作方法（DAO：Data Access Object）
 public interface CartDao {
 
@@ -18,4 +20,7 @@ public interface CartDao {
 
     // 根據購物車項目 ID 查詢一筆項目（通常用於後續更新或刪除操作）
     CartItem getCartItemById(Integer cartItemId);
+
+    // 根據用戶 ID 取得其所有購物車項目（通常用於前端頁面列出購物車內容）
+    List<CartItem> getCartItemsByUserId(Integer userId);
 }
