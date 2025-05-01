@@ -130,26 +130,26 @@ src/
 
 ---
 
-## 資料庫結構（ER圖）
+## 資料庫設計 ER 圖說明
 
-下圖為本專案的資料庫設計之 ER圖（Entity-Relationship Diagram，實體關係圖）。
+下圖為本專案的資料庫設計 ER 圖（Entity-Relationship Diagram，實體關聯圖），用以清晰呈現各資料表之間的邏輯關係與欄位結構：
 
-它清楚地展示了專案中主要資料表之間的關係與欄位結構：
+###  資料表簡介
 
-- `user`：用戶註冊資訊，包括 email、密碼與建立/修改時間
-- `product`：商品資訊，包含名稱、分類、價格、庫存與描述
-- `cart_item`：購物車項目，每位使用者可擁有多筆購物車記錄
-- `order`：訂單主表，紀錄下訂用戶與總金額
-- `order_item`：訂單明細，每筆訂單可包含多項商品
+- **user**：儲存用戶帳號資訊，包含 `email`、`password`、建立時間與最後修改時間。
+- **product**：儲存商品資訊，包含 `product_name`、`category`、`image_url`、`price`、`stock`、`description` 與時間戳記欄位。
+- **cart_item**：表示用戶購物車內容，每筆記錄對應某一位用戶與商品，並記錄數量與時間。
+- **orders**：訂單主表，紀錄下訂的用戶、訂單總金額及時間。
+- **order_item**：訂單明細，紀錄每筆訂單中所包含的商品、數量與金額。
 
-資料表之間的邏輯關聯如下：
+###  資料表關聯結構
 
-- 一位使用者（user）可以有多筆訂單（order） ➜ 1:N
-- 一位使用者（user）可以有多筆購物車項目（cart_item） ➜ 1:N
-- 一張訂單（order）可以對應多筆明細（order_item） ➜ 1:N
-- 一筆明細（order_item）對應一項商品（product） ➜ N:1
+- 一位用戶（`user`）可擁有多筆訂單（`orders`） ➜ `1:N`
+- 一位用戶可擁有多筆購物車項目（`cart_item`） ➜ `1:N`
+- 一張訂單（`orders`）可包含多筆明細（`order_item`） ➜ `1:N`
+- 每筆訂單明細（`order_item`）對應一項商品（`product`），但一項商品可出現在多筆明細中 ➜ `N:1`
 
-> 🔍 注意：目前資料表中並未使用 `FOREIGN KEY` 明確定義外鍵關聯，但 ER 圖仍依照欄位命名邏輯推論出其資料流與結構關係。
+>  **備註**：資料表中已使用 `FOREIGN KEY` 明確定義表間關聯（如 `user_id`, `product_id` 等），ER 圖即是根據這些邏輯結構所繪製。
 
 ![ER Diagram](./springboot-er.png.png)
 
