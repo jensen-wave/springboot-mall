@@ -64,7 +64,7 @@ public class OrderServiceImpl implements OrderService {
         // 遍歷購買清單，計算總金額並驗證商品與庫存
         for (BuyItem buyItem : buyItemList) {
             // 根據商品 ID 查詢商品資訊
-            Product product = productDao.getProductById(buyItem.getProductId());
+            Product product = productDao.getProductByIdForUpdate(buyItem.getProductId());
 
             // 檢查商品是否存在
             if (product == null) {
